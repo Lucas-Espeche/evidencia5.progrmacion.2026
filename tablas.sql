@@ -1,66 +1,64 @@
--- Tablas para el sistema Odontokinesis
-
+-- Creación de la tabla Paciente 
 CREATE TABLE paciente (
-    id_paciente INT PRIMARY KEY,
+    dni VARCHAR(10) PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
-    dni VARCHAR(20) UNIQUE NOT NULL,
-    telefono VARCHAR(25),
-    email VARCHAR(100)
+    telefono VARCHAR(20) NOT NULL,
+    email VARCHAR(100) NOT NULL
 );
 
+-- Creación de la tabla Profesional 
 CREATE TABLE profesional (
-    id_profesional INT PRIMARY KEY,
+    matrícula VARCHAR(20) PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
-    matricula VARCHAR(20) UNIQUE NOT NULL,
-    especialidad VARCHAR(50) NOT NULL
+    especialidad VARCHAR(20) NOT NULL,
+    teléfono VARCHAR(20) NOT NULL
 );
 
+-- Creación de la tabla Turnos 
 CREATE TABLE turno (
-    id_turno INT PRIMARY KEY,
-    fecha_hora TIMESTAMP NOT NULL,
-    estado VARCHAR(20) NOT NULL CHECK (estado IN ('Pendiente', 'Confirmado', 'Cancelado', 'Atendido')),
-    paciente_id INT NOT NULL,
-    profesional_id INT NOT NULL,
-    CONSTRAINT fk_turno_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id_paciente),
-    CONSTRAINT fk_turno_profesional FOREIGN KEY (profesional_id) REFERENCES profesional(id_profesional)
+    id_turno SERIAL PRIMARY KEY,
+    dni_paciente VARCHAR(10) NOT NULL,
+    matrícula_prof VARCHAR(20) NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    estado VARCHAR(20) CHECK (estado IN ('Reservado', 'Confirmado', 'Atendido', 'Cancelado')) NOT NULL,
+    CONSTRAINT fk_paciente FOREIGN KEY (dni_paciente) REFERENCES paciente(dni),
+    CONSTRAINT fk_profesional FOREIGN KEY (matrícula_prof) REFERENCES profesional(matrícula)
 );
 
--- Datos de prueba
+-- Inserción de 10 datos de prueba para Pacientes
+INSERT INTO paciente (dni, nombre, apellido, telefono, email) VALUES 
+('12345678', 'Juan', 'Pérez', '3511234567', 'juan.perez@email.com'),
+('87654321', 'María', 'Gómez', '3519876543', 'maria.gomez@email.com'),
+('11223344', 'Carlos', 'Rodríguez', '3514567890', 'carlos.rodriguez@email.com'),
+('22334455', 'Ana', 'Martínez', '3517890123', 'ana.martinez@email.com'),
+('33445566', 'Lucas', 'Fernández', '3513216549', 'lucas.fernandez@email.com'),
+('44556677', 'Sofía', 'López', '3516549870', 'sofia.lopez@email.com'),
+('55667788', 'Mateo', 'García', '3519873210', 'mateo.garcia@email.com'),
+('66778899', 'Valentina', 'Sánchez', '3511472583', 'valentina.sanchez@email.com'),
+('77889900', 'Diego', 'Ramírez', '3512583691', 'diego.ramirez@email.com'),
+('88990011', 'Lucía', 'Torres', '3513692584', 'lucia.torres@email.com');
 
-INSERT INTO paciente VALUES
-(1, 'Juan', 'Pérez', '35123456', '3514112233', 'juan@email.com'),
-(2, 'María', 'Gómez', '38987654', '3515223344', 'maria@email.com'),
-(3, 'Carlos', 'López', '32111222', '3516334455', 'carlos@email.com'),
-(4, 'Ana', 'Martínez', '40555666', '3517445566', 'ana@email.com'),
-(5, 'Lucía', 'Rodríguez', '37444333', '3518556677', 'lucia@email.com'),
-(6, 'Mateo', 'Fernández', '39222111', '3519667788', 'mateo@email.com'),
-(7, 'Sofía', 'Díaz', '41777888', '3511778899', 'sofia@email.com'),
-(8, 'Joaquín', 'Álvarez', '36333444', '3512889900', 'joaquin@email.com'),
-(9, 'Valentina', 'Romero', '42888999', '3513990011', 'valentina@email.com'),
-(10, 'Lucas', 'Giménez', '34000111', '3514001122', 'lucas@email.com');
+-- Inserción de Profesionales de prueba
+INSERT INTO profesional (matrícula, nombre, apellido, especialidad, teléfono) VALUES 
+('MP1234', 'Carlos', 'López', 'Odontología', '3511111111'),
+('MP5678', 'Ana', 'Torres', 'Odontología', '3512222222'),
+('MP9012', 'Esteban', 'Giménez', 'Kinesiología', '3513333333'),
+('MP3456', 'Mariana', 'Ruiz', 'Kinesiología', '3514444444'),
+('MP7890', 'Javier', 'Benítez', 'Odontología', '3515555555');
 
-INSERT INTO profesional VALUES
-(1, 'Esteban', 'Quito', 'MP1234', 'Ortodoncia'),
-(2, 'Mariana', 'Benítez', 'MP5678', 'Endodoncia'),
-(3, 'Roberto', 'Sánchez', 'MP9012', 'Odontopediatría'),
-(4, 'Clara', 'Mendoza', 'MP3456', 'Periodoncia'),
-(5, 'Gabriel', 'Navarro', 'MP7890', 'Cirugía Maxilofacial'),
-(6, 'Daniela', 'Acosta', 'MP2345', 'Implantología'),
-(7, 'Julián', 'Paz', 'MP6789', 'Odontología General'),
-(8, 'Florencia', 'Medina', 'MP4321', 'Estética Dental'),
-(9, 'Hernán', 'Castillo', 'MP8765', 'Ortodoncia'),
-(10, 'Camila', 'Rivas', 'MP1122', 'Endodoncia');
+-- Inserción de 10 datos de prueba para Turnos
+INSERT INTO turno (dni_paciente, matrícula_prof, fecha, hora, estado) VALUES 
+('12345678', 'MP1234', '2026-06-10', '10:30:00', 'Confirmado'),
+('87654321', 'MP5678', '2026-06-11', '15:00:00', 'Reservado'),
+('11223344', 'MP9012', '2026-06-12', '09:00:00', 'Confirmado'),
+('22334455', 'MP3456', '2026-06-12', '11:30:00', 'Cancelado'),
+('33445566', 'MP7890', '2026-06-13', '14:00:00', 'Atendido'),
+('44556677', 'MP1234', '2026-06-14', '16:15:00', 'Reservado'),
+('55667788', 'MP5678', '2026-06-15', '10:00:00', 'Confirmado'),
+('66778899', 'MP9012', '2026-06-16', '11:00:00', 'Reservado'),
+('77889900', 'MP3456', '2026-06-17', '15:30:00', 'Atendido'),
+('88990011', 'MP7890', '2026-06-18', '09:30:00', 'Confirmado');
 
-INSERT INTO turno VALUES
-(1, '2026-06-01 09:00:00', 'Confirmado', 1, 1),
-(2, '2026-06-01 10:00:00', 'Pendiente', 2, 2),
-(3, '2026-06-02 11:30:00', 'Atendido', 3, 3),
-(4, '2026-06-03 14:00:00', 'Cancelado', 4, 4),
-(5, '2026-06-04 15:30:00', 'Confirmado', 5, 5),
-(6, '2026-06-05 08:30:00', 'Pendiente', 6, 6),
-(7, '2026-06-06 09:15:00', 'Confirmado', 7, 7),
-(8, '2026-06-08 16:00:00', 'Atendido', 8, 8),
-(9, '2026-06-09 11:00:00', 'Pendiente', 9, 9),
-(10, '2026-06-10 17:15:00', 'Confirmado', 10, 10);
